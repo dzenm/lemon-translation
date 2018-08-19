@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">LemonTranslate</string>
+    <string name="directionary">字典</string>
+    <string name="hint_translate">请输入要翻译的词语或句子</string>
+    <string name="clear_btn">清除</string>
+    <string name="qr_btn">扫一扫</string>
+    <string name="translate_btn">翻译</string>
+    <string name="copy_btn">复制</string>
+</resources>
