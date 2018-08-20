@@ -1,4 +1,4 @@
-package com.translate;
+package com.translate.api;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

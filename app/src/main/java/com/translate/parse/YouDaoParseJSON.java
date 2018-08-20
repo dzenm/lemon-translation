@@ -1,4 +1,4 @@
-package com.translate;
+package com.translate.parse;
 
 import android.util.Log;
 

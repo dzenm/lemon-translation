@@ -1,7 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 28
+    dataBinding {
+        enabled true
+    }
     defaultConfig {
         applicationId "com.translate"
         minSdkVersion 21
@@ -17,7 +21,9 @@ android {
         }
     }
 }
-
+realm {
+    syncEnabled = true;
+}
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'

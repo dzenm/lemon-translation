@@ -11,16 +11,16 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class GetJSONData {
+public class GetData {
 
     private OkHttpClient client;
 
-    public GetJSONData() {
+    public GetData() {
         client = new OkHttpClient();    // 新建OkHttpClient对象
     }
 
-    public Observable<String> getJsonData(final String path) {
-        Observable<String> observable = Observable.create(new ObservableOnSubscribe<String>() {
+    public Observable<String> getJsonData(final String path) {  
+        return Observable.create(new ObservableOnSubscribe<String>() {  // 返回observable
             @Override
             public void subscribe(final ObservableEmitter<String> emitter) throws Exception {
                 Request request = new Request.Builder()
@@ -43,6 +43,5 @@ public class GetJSONData {
                 });
             }
         });
-        return observable;  // 返回observable
     }
 }
