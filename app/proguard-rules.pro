@@ -19,3 +19,21 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# 在开发的时候我们可以将所有的实体类放在一个包内，这样我们写一次混淆就行了。
+-keep public class com.android.bean.** {
+    public void set*(***);
+    public *** get*();
+    public *** is*();
+}
+
+# keep okhttp3、okio不被混淆
+-keep interface okhttp3.**{*;}
+
+#okhttp
+-dontwarn okhttp3.**
+-keep class okhttp3.**{*;}
+
+#okio
+-dontwarn okio.**
+-keep class okio.**{*;}
