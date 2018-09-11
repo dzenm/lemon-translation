@@ -82,7 +82,7 @@
                         <TextView
                             android:id="@+id/translation"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:padding="20dp" />
 
                         <Button
@@ -125,23 +125,15 @@
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/directionary"
                             android:layout_marginBottom="10dp"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:id="@+id/us"
-                            style="@style/TextViewTheme"
-                            android:layout_below="@+id/directionary"
-                            android:layout_marginBottom="10dp"
-                            android:layout_marginRight="10dp"
-                            android:layout_toRightOf="@+id/usPron" />
+                            android:padding="5dp" />
 
                         <ImageButton
                             android:id="@+id/usPlay"
-                            android:layout_width="40dp"
-                            android:layout_height="32dp"
+                            android:layout_width="32dp"
+                            android:layout_height="24dp"
                             android:layout_below="@+id/directionary"
                             android:layout_marginRight="20dp"
-                            android:layout_toRightOf="@+id/us"
+                            android:layout_toRightOf="@+id/usPron"
                             android:background="@null"
                             android:onClick="onClick"
                             android:src="@drawable/play3" />
@@ -152,21 +144,14 @@
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/directionary"
                             android:layout_toRightOf="@+id/usPlay"
-                            android:textStyle="italic" />
-
-                        <TextView
-                            android:id="@+id/uk"
-                            style="@style/TextViewTheme"
-                            android:layout_below="@+id/directionary"
-                            android:layout_marginRight="10dp"
-                            android:layout_toRightOf="@+id/ukPron" />
+                            android:padding="5dp" />
 
                         <ImageButton
                             android:id="@+id/ukPlay"
-                            android:layout_width="40dp"
-                            android:layout_height="32dp"
+                            android:layout_width="32dp"
+                            android:layout_height="24dp"
                             android:layout_below="@+id/directionary"
-                            android:layout_toRightOf="@+id/uk"
+                            android:layout_toRightOf="@+id/ukPron"
                             android:background="@null"
                             android:onClick="onClick"
                             android:src="@drawable/play3" />
@@ -174,8 +159,9 @@
                         <TextView
                             android:id="@+id/explains"
                             style="@style/TextViewTheme"
-                            android:layout_below="@+id/us"
-                            android:layout_marginBottom="10dp" />
+                            android:layout_below="@+id/usPron"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginTop="10dp" />
 
                         <TextView
                             android:id="@+id/explainWord"
@@ -212,6 +198,12 @@
             android:onClick="onClick"
             android:src="@drawable/add"
             app:elevation="5dp" />
+
+
+        <com.translate.utils.FabGroupAnimation
+            android:id="@+id/fabGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

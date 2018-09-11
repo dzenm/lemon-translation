@@ -8,13 +8,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.translate.R;
-import com.translate.javabean.WordsBean;
+import com.translate.bean.WordsBean;
 
 import java.util.List;
 
 public class WordsAdapter extends RecyclerView.Adapter<WordsAdapter.ViewHolder> {
 
     private List<WordsBean> wordsBeans;
+    private OnItemClickListener onItemClickListener;
+
+    public WordsAdapter setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+        return this;
+    }
 
     public WordsAdapter setWordsBeans(List<WordsBean> wordsBeans) {
         this.wordsBeans = wordsBeans;
@@ -30,9 +36,15 @@ public class WordsAdapter extends RecyclerView.Adapter<WordsAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WordsAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull WordsAdapter.ViewHolder viewHolder, final int i) {
         WordsBean wordsBean = wordsBeans.get(i);
         viewHolder.bindData(wordsBean);
+        viewHolder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClickListener.onItemClick(i);
+            }
+        });
     }
 
     @Override
@@ -42,9 +54,10 @@ public class WordsAdapter extends RecyclerView.Adapter<WordsAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView chinese, english;
-
+        private View view;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            view = itemView;
             chinese = itemView.findViewById(R.id.chinese);
             english = itemView.findViewById(R.id.english);
         }
@@ -53,5 +66,9 @@ public class WordsAdapter extends RecyclerView.Adapter<WordsAdapter.ViewHolder> 
             chinese.setText(wordsBean.getChinese());
             english.setText(wordsBean.getEnglish());
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
     }
 }

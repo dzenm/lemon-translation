@@ -1,18 +1,16 @@
-package com.translate.javabean;
+package com.translate.db;
 
-public class WordsBean {
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
+public class Words extends RealmObject {
+
+    @PrimaryKey
     private String id;
+
     private String english;
     private String chinese;
     private boolean like;
-
-    public WordsBean(String id, String english, String chinese, boolean like) {
-        this.id = id;
-        this.english = english;
-        this.chinese = chinese;
-        this.like = like;
-    }
 
     public String getId() {
         return id;
