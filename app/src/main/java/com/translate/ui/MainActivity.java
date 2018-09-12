@@ -1,5 +1,6 @@
 package com.translate.ui;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
                 binding.content.setText("");
                 break;
             case R.id.qrBtn:
+                startActivity(new Intent(this, QrCodeActivity.class));
                 break;
             case R.id.translateBtn:
                 String query = binding.content.getText().toString().trim();   // 获取输入的要翻译的文本
