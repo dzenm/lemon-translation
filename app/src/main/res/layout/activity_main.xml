@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="word"
+            type="com.translate.viewmodel.Word" />
+
+        <variable
+            name="presenter"
+            type="com.translate.ui.MainActivity" />
+
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.MainActivity">
+        android:layout_height="match_parent">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -32,29 +45,30 @@
                     android:background="@null"
                     android:gravity="top"
                     android:hint="@string/hint_translate"
-                    android:paddingLeft="30dp"
-                    android:paddingRight="30dp"
-                    android:textColor="#fff"
+                    android:paddingLeft="40dp"
+                    android:paddingRight="40dp"
+                    android:text="@={word.contentInput}"
+                    android:textColor="#ffffff"
                     android:textColorHint="@color/doublewhite" />
 
                 <Button
                     android:id="@+id/clearBtn"
                     style="@style/BtnTheme"
-                    android:onClick="onClick"
+                    android:onClick="@{presenter::onClick}"
                     android:text="@string/clear_btn" />
 
                 <Button
                     android:id="@+id/qrBtn"
                     style="@style/BtnTheme"
                     android:layout_centerHorizontal="true"
-                    android:onClick="onClick"
+                    android:onClick="@{presenter::onClick}"
                     android:text="@string/qr_btn" />
 
                 <Button
                     android:id="@+id/translateBtn"
                     style="@style/BtnTheme"
                     android:layout_alignParentRight="true"
-                    android:onClick="onClick"
+                    android:onClick="@{presenter::onClick}"
                     android:text="@string/translate_btn" />
             </RelativeLayout>
         </android.support.design.widget.AppBarLayout>
@@ -66,24 +80,24 @@
             android:fillViewport="true"
             android:scrollbars="vertical">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
                 <android.support.design.card.MaterialCardView
-                    android:id="@+id/transLayout"
                     style="@style/CardViewStyle"
-                    android:visibility="gone">
+                    android:visibility="@{word.showWord ? View.VISIBLE : View.GONE}">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
                         <TextView
-                            android:id="@+id/translation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:padding="20dp" />
+                            android:padding="20dp"
+                            android:text="@{word.transResult}" />
 
                         <Button
                             android:id="@+id/copyToPaste"
@@ -93,7 +107,7 @@
                             android:layout_centerVertical="true"
                             android:background="@null"
                             android:foreground="?attr/selectableItemBackgroundBorderless"
-                            android:onClick="onClick"
+                            android:onClick="@{presenter::onClick}"
                             android:text="@string/copy_btn" />
                     </RelativeLayout>
                 </android.support.design.card.MaterialCardView>
@@ -101,80 +115,86 @@
                 <android.support.v7.widget.CardView
                     android:id="@+id/show"
                     style="@style/CardViewStyle"
-                    android:layout_below="@+id/transLayout"
-                    android:visibility="gone"
+                    android:visibility="@{word.showDic ? View.VISIBLE : View.GONE}"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="2dp">
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="vertical"
                         android:padding="20dp">
 
+                        <!--
+                          android:layout_marginBottom="@{word.usPlay &amp;&amp; word.ukPlay ? @dimen/zero_dp : @dimen/margin_bottom}"
+                        -->
                         <TextView
                             android:id="@+id/directionary"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="10dp"
                             android:text="@string/directionary"
-                            android:textSize="16sp" />
+                            android:textSize="22sp" />
 
-                        <TextView
-                            android:id="@+id/usPron"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/directionary"
                             android:layout_marginBottom="10dp"
-                            android:padding="5dp" />
+                            android:orientation="horizontal"
+                            android:visibility="@{word.showPhonetic ? View.VISIBLE : View.GONE}">
 
-                        <ImageButton
-                            android:id="@+id/usPlay"
-                            android:layout_width="32dp"
-                            android:layout_height="24dp"
-                            android:layout_below="@+id/directionary"
-                            android:layout_marginRight="20dp"
-                            android:layout_toRightOf="@+id/usPron"
-                            android:background="@null"
-                            android:onClick="onClick"
-                            android:src="@drawable/play3" />
+                            <TextView
+                                android:id="@+id/usPron"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="5dp"
+                                android:text="@{word.usPhonetic}" />
 
-                        <TextView
-                            android:id="@+id/ukPron"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/directionary"
-                            android:layout_toRightOf="@+id/usPlay"
-                            android:padding="5dp" />
+                            <ImageButton
+                                android:id="@+id/usPlay"
+                                android:layout_width="32dp"
+                                android:layout_height="24dp"
+                                android:layout_marginRight="20dp"
+                                android:background="@null"
+                                android:onClick="@{presenter::onClick}"
+                                android:src="@drawable/play3"
+                                android:visibility="@{word.usPlay ? View.VISIBLE : View.GONE}" />
 
-                        <ImageButton
-                            android:id="@+id/ukPlay"
-                            android:layout_width="32dp"
-                            android:layout_height="24dp"
-                            android:layout_below="@+id/directionary"
-                            android:layout_toRightOf="@+id/ukPron"
-                            android:background="@null"
-                            android:onClick="onClick"
-                            android:src="@drawable/play3" />
+                            <TextView
+                                android:id="@+id/ukPron"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:padding="5dp"
+                                android:text="@{word.ukPhonetic}" />
+
+                            <ImageButton
+                                android:id="@+id/ukPlay"
+                                android:layout_width="32dp"
+                                android:layout_height="24dp"
+                                android:background="@null"
+                                android:onClick="@{presenter::onClick}"
+                                android:src="@drawable/play3"
+                                android:visibility="@{word.ukPlay ? View.VISIBLE : View.GONE}" />
+
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/explains"
                             style="@style/TextViewTheme"
-                            android:layout_below="@+id/usPron"
                             android:layout_marginBottom="10dp"
-                            android:layout_marginTop="10dp" />
+                            android:text="@{word.dic}" />
 
                         <TextView
                             android:id="@+id/explainWord"
                             style="@style/TextViewTheme"
-                            android:layout_below="@+id/explains"
-                            android:layout_marginBottom="10dp" />
+                            android:layout_marginBottom="10dp"
+                            android:text="@{word.expand}" />
 
-                    </RelativeLayout>
+                    </LinearLayout>
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
                     style="@style/CardViewStyle"
-                    android:layout_below="@+id/show"
                     android:layout_marginBottom="20dp"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="2dp">
@@ -185,8 +205,7 @@
                         android:layout_height="match_parent" />
 
                 </android.support.v7.widget.CardView>
-
-            </RelativeLayout>
+            </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
 
         <android.support.design.widget.FloatingActionButton
@@ -195,10 +214,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_margin="16dp"
-            android:onClick="onClick"
+            android:onClick="@{presenter::onClick}"
             android:src="@drawable/add"
             app:elevation="5dp" />
-
 
         <com.translate.utils.FabGroupAnimation
             android:id="@+id/fabGroup"

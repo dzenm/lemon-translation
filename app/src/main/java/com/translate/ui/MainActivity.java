@@ -27,6 +27,7 @@ import com.translate.db.WordsHelper;
 import com.translate.presenter.MainPresenter;
 import com.translate.utils.FabGroupAnimation;
 import com.translate.utils.Paste;
+import com.translate.viewmodel.Word;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +36,14 @@ import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements MainPresenter.OnParseJsonListener, FabGroupAnimation.OnFabItemClickListener, WordsAdapter.OnItemClickListener {
 
+    private final static String TAG = MainActivity.class.getSimpleName();
     private ActivityMainBinding binding;
 
     private MainPresenter presenter;
     private WordsAdapter adapter;
     private YouDaoBean bean;
     private List<WordsBean> wordsBeans;
+    private Word word;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,22 +51,22 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         setSupportActionBar(binding.toolbar);
-        getSupportActionBar().setTitle("Lemon 翻译");
+        getSupportActionBar().setTitle(R.string.toolbar_title);
 
-        presenter = new MainPresenter();
+        word = new Word();
+        binding.setWord(word);
+        binding.setPresenter(this);
+
         wordsBeans = new ArrayList<>();
-        presenter.setOnParseJsonListener(this);
-
+        presenter = new MainPresenter();
         adapter = new WordsAdapter();
+
         adapter.setWordsBeans(getData());
+        presenter.setOnParseJsonListener(this);
         adapter.setOnItemClickListener(this);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(adapter);
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         int[] ids = {R.id.diary, R.id.note};      // Fab组ID
         int[] textIDs = {R.id.diaryText, R.id.noteText};
 
@@ -80,12 +83,8 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.setting:
-                Toast.makeText(this, "设置", Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                break;
+        if (item.getItemId() == R.id.setting) {
+            Toast.makeText(this, R.string.settings, Toast.LENGTH_SHORT).show();
         }
         return true;
     }
@@ -93,34 +92,34 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.clearBtn:                 // 清空输入框
-                binding.content.setText("");
+                word.setContentInput(getString(R.string.null_string));
                 break;
             case R.id.qrBtn:
                 startActivity(new Intent(this, QrCodeActivity.class));
                 break;
             case R.id.translateBtn:
-                String query = binding.content.getText().toString().trim();   // 获取输入的要翻译的文本
+                String query = word.getContentInput();   // 获取输入的要翻译的文本
                 if (query.length() <= 0) {
-                    Toast.makeText(this, "请输入要查询的单词", Toast.LENGTH_SHORT).show();
-                    return;
+                    Toast.makeText(this, R.string.info_input_trans_word, Toast.LENGTH_SHORT).show();
+                } else {
+                    String url = TransLateAPI.autoTranslate(query);                         // 不存在时去网上获取
+                    Log.d(TAG, url);
+                    presenter.getResult(url);
                 }
-                String url = TransLateAPI.autoTranslate(query);                         // 不存在时去网上获取
-                Log.d("DZY", url);
-                presenter.getResult(url);
                 break;
             case R.id.usPlay:                           // 美式读音播放
                 String us_path = bean.getUs_speech();
-                startVoice(us_path);
+                startPlayVoice(us_path);
                 startAnimation(binding.usPlay);
                 break;
             case R.id.ukPlay:                           // 英式读音播放
                 String uk_path = bean.getUk_speech();
-                startVoice(uk_path);
+                startPlayVoice(uk_path);
                 startAnimation(binding.ukPlay);
                 break;
             case R.id.copyToPaste:                      // 复制到剪贴板
-                Paste.copyToPaste(this, binding.translation.getText().toString());
-                Toast.makeText(this, "复制成功", Toast.LENGTH_SHORT).show();
+                Paste.copyToPaste(this, word.getTransResult());
+                Toast.makeText(this, R.string.info_copy_success, Toast.LENGTH_SHORT).show();
                 break;
             case R.id.floatBtn:
                 if (binding.fabGroup.isEnpand()) {
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
      *
      * @param path
      */
-    private void startVoice(String path) {
+    private void startPlayVoice(String path) {
         Uri uri = Uri.parse(path);
         try {
             final MediaPlayer mediaPlayer = new MediaPlayer();
@@ -166,35 +165,19 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
         String us_word = "", uk_word = "";
         if (bean.getL().equals("EN2zh-CHS")) {     // 判断l值语言自动选择
             String us = bean.getUs_phonetic(), uk = bean.getUk_phonetic();
-            if (!us.equals("") && us.length() > 0) {
-                us_word = "美：/" + us + "/";
-                if (binding.usPlay.getVisibility() != View.VISIBLE) {
-                    pronPlayVisible(binding.usPlay, true);
-                }
-            }
-            if (!uk.equals("") && uk.length() > 0) {
-                uk_word = "英：/" + uk + "/";
-                if (binding.ukPlay.getVisibility() != View.VISIBLE) {
-                    pronPlayVisible(binding.ukPlay, true);
-                }
-            }
+
+            us_word = us.equals("") ? "" : "美：/" + us + "/";
+            word.setUsPlay(us.equals("") ? false : true);
+            uk_word = uk.equals("") ? "" : "英：/" + uk + "/";
+            word.setUkPlay(uk.equals("") ? false : true);
+            word.setShowPhonetic(true);
         } else if (bean.getL().equals("zh-CHS2EN")) {
-            String pron = bean.getPhonetic();
-            if (!pron.equals("") && pron.length() > 0) {
-                us_word = "拼音：" + pron;
-                uk_word = "";
-                if (binding.usPlay.getVisibility() != View.VISIBLE) {
-                    pronPlayVisible(binding.usPlay, true);
-                }
-                pronPlayVisible(binding.ukPlay, false);
-            } else {
-                if (binding.usPlay.getVisibility() == View.VISIBLE) {
-                    pronPlayVisible(binding.usPlay, false);
-                }
-                if (binding.ukPlay.getVisibility() == View.VISIBLE) {
-                    pronPlayVisible(binding.ukPlay, false);
-                }
-            }
+            us_word = bean.getPhonetic().equals("") ? "" : "拼音：" + bean.getPhonetic();
+            uk_word = "";
+
+            word.setShowPhonetic(false);
+            word.setUsPlay(false);
+            word.setUkPlay(false);
         }
 
         List<YouDaoBean.Web> webList = bean.getWeb();
@@ -203,12 +186,8 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
             explain.append(webList.get(i).getKey() + "\n" + webList.get(i).getValue() + "\n\n");
         }
 
-        String explains = bean.getExplain();            // 扩展的词义
-        String text = bean.getTranslation();
-        String extend = explain.toString();             // 翻译
-
         showVoice(us_word, uk_word);            // 显示音标数据
-        showData(explains, extend, text);               // 显示翻译数据
+        showData(bean.getExplain(), explain.toString(), bean.getTranslation());               // 显示翻译数据
     }
 
     /**
@@ -218,45 +197,26 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
      * @param uk_word
      */
     private void showVoice(final String us_word, final String uk_word) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                binding.usPron.setText(us_word);      // 美式音标
-                binding.ukPron.setText(uk_word);      // 英式音标
-            }
-        });
+        word.setUsPhonetic(us_word);
+        word.setUkPhonetic(uk_word);
     }
 
     /**
      * 翻译数据
      *
-     * @param explains_word
-     * @param extend_word
-     * @param translatation_text
+     * @param dic_word
+     * @param expand_word
+     * @param trans_text
      */
-    private void showData(final String explains_word, final String extend_word,
-                          final String translatation_text) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                binding.transLayout.setVisibility(View.VISIBLE);
-                binding.explains.setText(explains_word);    // 中文词义解释
-                saveData(translatation_text, binding.content.getText().toString());
-                binding.show.setVisibility(View.VISIBLE);   // 设置可见
-                binding.explainWord.setText(extend_word);       // 中文扩展词义
-                binding.translation.setText(translatation_text);       // 中文扩展词义
-                binding.recyclerView.smoothScrollToPosition(0);
-            }
-        });
-    }
+    private void showData(final String dic_word, final String expand_word, final String trans_text) {
+        word.setShowDic(true);
+        word.setShowWord(true);
+        word.setTransResult(trans_text);                // 单词翻译结果
+        word.setDic(dic_word);                          // 单词翻译---词典释义
+        word.setExpand(expand_word);                    // 单词翻译---扩展词义
+        binding.recyclerView.smoothScrollToPosition(0);
+        saveData(word.getContentInput(), trans_text);
 
-    private void pronPlayVisible(final View view, final boolean show) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                view.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
     }
 
     /**
@@ -273,18 +233,17 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
     /**
      * 存储数据到数据库
      *
-     * @param english
-     * @param chinese
+     * @param query
+     * @param result
      */
-    private void saveData(final String english, final String chinese) {
-        List<Words> wordsList = WordsHelper.query(english.toLowerCase());                           // 判断数据库是否存在要查询的内容
+    private void saveData(final String query, final String result) {
+        List<Words> wordsList = WordsHelper.query(query.toLowerCase());                           // 判断数据库是否存在要查询的内容
         if (wordsList.size() > 0) {
-            WordsHelper.update(english, chinese);
+            WordsHelper.update(query, result);
         } else {
-            WordsHelper.insert(english, chinese);
+            WordsHelper.insert(query, result);
         }
         getData();
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -295,14 +254,9 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
 
     @Override
     public void onFailed() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                binding.transLayout.setVisibility(View.VISIBLE);
-                binding.show.setVisibility(View.GONE);   // 设置可见
-                binding.translation.setText("请换一个词搜索");
-            }
-        });
+        word.setShowWord(true);
+        word.setShowDic(false);
+        word.setTransResult(getResources().getString(R.string.info_change_word_to_search));
     }
 
     /**
@@ -314,18 +268,15 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
         wordsBeans.clear();
         List<Words> wordsList = WordsHelper.query();
         for (int i = wordsList.size() - 1; i >= 0; i--) {
-            wordsBeans.add(new WordsBean(wordsList.get(i).getId(),
-                    wordsList.get(i).getChinese(),
-                    wordsList.get(i).getEnglish(),
-                    wordsList.get(i).isLike()));
+            Words words = wordsList.get(i);
+            WordsBean wordsBean = new WordsBean();
+            wordsBean.setId(words.getId());
+            wordsBean.setQuery(words.getQuery());
+            wordsBean.setResult(words.getResult());
+            wordsBean.setLike(words.isLike());
+            wordsBeans.add(wordsBean);
         }
         return wordsBeans;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Realm.getDefaultInstance().close();
     }
 
     @Override
@@ -347,10 +298,16 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
      */
     @Override
     public void onItemClick(int position) {
-        String query = wordsBeans.get(position).getEnglish();
-        binding.content.setText(query);
+        String query = wordsBeans.get(position).getQuery();
+        word.setContentInput(query);
         String url = TransLateAPI.autoTranslate(query);
-        Log.d("DZY", url);
+        Log.d(TAG, url);
         presenter.getResult(url);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Realm.getDefaultInstance().close();
     }
 }

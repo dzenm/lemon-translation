@@ -8,8 +8,8 @@ public class Words extends RealmObject {
     @PrimaryKey
     private String id;
 
-    private String english;
-    private String chinese;
+    private String query;
+    private String result;
     private boolean like;
 
     public String getId() {
@@ -20,20 +20,20 @@ public class Words extends RealmObject {
         this.id = id;
     }
 
-    public String getEnglish() {
-        return english;
+    public String getQuery() {
+        return query;
     }
 
-    public void setEnglish(String english) {
-        this.english = english;
+    public void setQuery(String query) {
+        this.query = query;
     }
 
-    public String getChinese() {
-        return chinese;
+    public String getResult() {
+        return result;
     }
 
-    public void setChinese(String chinese) {
-        this.chinese = chinese;
+    public void setResult(String result) {
+        this.result = result;
     }
 
     public boolean isLike() {

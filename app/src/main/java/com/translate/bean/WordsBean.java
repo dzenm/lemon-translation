@@ -1,48 +1,54 @@
 package com.translate.bean;
 
-public class WordsBean {
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+
+import com.translate.BR;
+
+public class WordsBean extends BaseObservable {
 
     private String id;
-    private String english;
-    private String chinese;
+    private String query;
+    private String result;
     private boolean like;
 
-    public WordsBean(String id, String english, String chinese, boolean like) {
-        this.id = id;
-        this.english = english;
-        this.chinese = chinese;
-        this.like = like;
-    }
-
+    @Bindable
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+        notifyPropertyChanged(BR.id);
     }
 
-    public String getEnglish() {
-        return english;
+    @Bindable
+    public String getQuery() {
+        return query;
     }
 
-    public void setEnglish(String english) {
-        this.english = english;
+    public void setQuery(String query) {
+        this.query = query;
+        notifyPropertyChanged(BR.query);
     }
 
-    public String getChinese() {
-        return chinese;
+    @Bindable
+    public String getResult() {
+        return result;
     }
 
-    public void setChinese(String chinese) {
-        this.chinese = chinese;
+    public void setResult(String result) {
+        this.result = result;
+        notifyPropertyChanged(BR.result);
     }
 
+    @Bindable
     public boolean isLike() {
         return like;
     }
 
     public void setLike(boolean like) {
         this.like = like;
+        notifyPropertyChanged(BR.like);
     }
 }

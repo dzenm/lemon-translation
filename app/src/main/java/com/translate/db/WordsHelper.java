@@ -17,22 +17,22 @@ public class WordsHelper {
     public static List<Words> query(String filed) {
         RealmResults<Words> words = Realm.getDefaultInstance()
                 .where(Words.class)
-                .equalTo("english", filed)
-                .or()
-                .equalTo("chinese", filed)
+                .equalTo("query", filed)
+//                .or()
+//                .equalTo("result", filed)
                 .findAll();
         List<Words> wordsList = Realm.getDefaultInstance().copyFromRealm(words);
         return wordsList;
     }
 
 
-    public static void insert(final String english, final String chinese) {
+    public static void insert(final String query, final String result) {
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 Words words = realm.createObject(Words.class, UUID.randomUUID().toString());
-                words.setEnglish(english);
-                words.setChinese(chinese);
+                words.setQuery(query);
+                words.setResult(result);
                 words.setLike(false);
             }
         });
@@ -51,13 +51,13 @@ public class WordsHelper {
         });
     }
 
-    public static void update(final String english, final String chinese) {
+    public static void update(final String query, final String result) {
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 Words words = realm.where(Words.class).findFirst();                //先查找后得到User对象
-                words.setEnglish(english);
-                words.setChinese(chinese);
+                words.setQuery(query);
+                words.setResult(result);
             }
         });
     }
