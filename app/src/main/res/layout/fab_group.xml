@@ -12,29 +12,20 @@
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/diary"
+        android:id="@+id/setting"
         style="@style/FabGroupTheme"
         app:backgroundTint="@color/colorAccent"
         app:elevation="5dp"
         app:fabSize="mini"
         app:rippleColor="@color/gray"
-        app:srcCompat="@drawable/fab_memo" />
-
-    <TextView
-        android:id="@+id/diaryText"
-        style="@style/FabGroupTextTheme" />
+        app:srcCompat="@drawable/ic_setting" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/note"
+        android:id="@+id/about"
         style="@style/FabGroupTheme"
         app:backgroundTint="@color/colorAccent"
         app:elevation="5dp"
         app:fabSize="mini"
         app:rippleColor="@color/gray"
-        app:srcCompat="@drawable/fab_diary" />
-
-    <TextView
-        android:id="@+id/noteText"
-        style="@style/FabGroupTextTheme" />
-
+        app:srcCompat="@drawable/ic_about" />
 </RelativeLayout>

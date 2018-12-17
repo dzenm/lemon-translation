@@ -9,7 +9,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.OvershootInterpolator;
@@ -24,21 +23,17 @@ import java.util.List;
 public class FabGroupAnimation extends RelativeLayout implements View.OnClickListener {
 
     private FloatingActionButton show;
-    private static final int DURATION_LONG = 500;    // 动画过渡时间
-    private static final int DURATION_SHORT = 250;    // 动画过渡时间
+    private static final int DURATION_SHORT = 200;    // 动画过渡时间
+    private static final int TIME = 50;               // 动画过渡时间
     private boolean isEnpand = false;           // FloatActionButton是否展开
     private boolean isFirstClick = true;        // 第一次点击
-    private boolean isDesc = false;             // Fab文字描述
     private TextView masking;                   // 蒙版
     private int width, height;                  // 屏幕宽高
     private int fabCount;                       // Fab个数       
     private int size;                           // fab 的大小
     private float radius;                       // 屏幕对角线
     private List<View> fabs;                    // Fab组
-    private List<TextView> textViews;           // Fab组
-    private int[] ids;                          // Fab组item的ID 
-    private String[] descs;                     // Fab文字描述 
-    private int[] textIDs;                      // Fab组文字的ID
+    private int[] ids;                          // Fab组item的ID
     private int layoutID;                       // 布局
     private OnFabItemClickListener onFabItemClickListener;
 
@@ -64,17 +59,6 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
         return this;
     }
 
-    public FabGroupAnimation setView(int[] ids, String[] descs, int[] textIDs) {
-        this.ids = ids;
-        this.descs = descs;
-        this.textIDs = textIDs;
-        fabCount = ids.length;
-        isDesc = true;
-        initView();
-        return this;
-    }
-
-
     /**
      * 判断是否展开
      *
@@ -93,10 +77,9 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
      * 展开菜单
      */
     public FabGroupAnimation expandMenu() {
-        size = show.getMeasuredHeight();                                      // 获取Fab的宽度
+        size = show.getMeasuredHeight();                                        // 获取Fab的宽度
         isEnpand = true;
-        setMaskingExpand(0, radius);                                            // 展开动画
-        setMaskingAlpha(0.25f, 0.75f, new AnimatorListener() {        // 动画开始时设置可见
+        setMaskingExpand(0, radius, new AnimatorListener() {       // 动画开始时设置可见，展开动画
             @Override
             public void onAnimationStart(Animator animation) {
                 setVisible();
@@ -105,10 +88,8 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
             @Override
             public void onAnimationEnd(Animator animation) {
                 setFabRotation(0f, 45f);                         // 按钮旋转动画
-                for (int i = 0; i < fabCount; i++) {                                  // Fab组内的item展开
-                    setGroupExpand(fabs.get(i), 0, 0, 0, 1.3f * (i + 1));
-                    setGroupExpand(textViews.get(i), 0, 1.3f, 0, 1.3f * (i + 1));
-                }
+                setGroupExpand(fabs.get(0), 0, 1.3f * 1, TIME * 3, null);
+                setGroupExpand(fabs.get(1), 0, 1.3f * 2, TIME * 4, null);
                 if (isFirstClick) {
                     setFabVisible();
                 }
@@ -122,20 +103,19 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
      */
     public FabGroupAnimation shrinkMenu() {
         isEnpand = false;
-        setMaskingExpand(radius, 0);                                            // 收缩动画
-        setMaskingAlpha(0.75f, 0.5f, new AnimatorListener() {        // 动画结束时设置隐藏
-            @Override
-            public void onAnimationStart(Animator animation) {
-                setFabRotation(45f, 0f);                         // 按钮旋转动画
-                for (int i = 0; i < fabCount; i++) {                                  // Fab组内的item收缩
-                    setGroupShrink(fabs.get(i), 0, 0, 1.3f * (i + 1), 0);
-                    setGroupShrink(textViews.get(i), 1.3f, 0, 1.3f * (i + 1), 0);
-                }
-            }
-
+        setFabRotation(45f, 0f);                         // 按钮旋转动画
+        setGroupShrink(fabs.get(0), 1.3f * 1, 0, TIME * 3, null);
+        setGroupShrink(fabs.get(1), 1.3f * 2, 0, TIME * 4, new AnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                setVisible();
+                super.onAnimationEnd(animation);
+                setMaskingExpand(radius, 0, new AnimatorListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        setVisible();
+                    }
+                });  // 动画结束时设置隐藏，收缩动画
             }
         });
         return this;
@@ -161,15 +141,6 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
             fabs.get(i).setOnClickListener(this);
             fabs.get(i).setVisibility(View.GONE);
         }
-        if (isDesc) {
-            textViews = new ArrayList<>();              // 初始化文字
-            for (int i = 0; i < fabCount; i++) {
-                textViews.add((TextView) rootView.findViewById(textIDs[i]));
-                textViews.get(i).setOnClickListener(this);
-                textViews.get(i).setText(descs[i]);
-                textViews.get(i).setVisibility(View.GONE);
-            }
-        }
         masking = rootView.findViewById(R.id.masking);
         setMaskingClick();                              // 设置蒙版点击
     }
@@ -189,42 +160,23 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
     }
 
     /**
-     * 设置Fab组Item可见
-     */
-    protected void setFabVisible() {
-        for (int i = 0; i < fabCount; i++) {
-            fabs.get(i).setVisibility(View.VISIBLE);                // 设置Fab按钮隐藏
-            if (isDesc) {
-                textViews.get(i).setVisibility(View.VISIBLE);       // 设置文字隐藏
-            }
-        }
-        isFirstClick = false;
-    }
-
-    /**
      * Fab组展开动画
      *
      * @param target
-     * @param startTransX
-     * @param endTransX
      * @param startTransY
      * @param endTransY
      */
-    protected void setGroupExpand(View target, float startTransX, float endTransX, float startTransY, float endTransY) {
-        ObjectAnimator animatorX = ObjectAnimator.ofFloat(target,
-                "ScaleX", 0f, 1.0f);                        // X方向放大
-        ObjectAnimator animatorY = ObjectAnimator.ofFloat(target,                 // Y方向放大
-                "ScaleY", 0f, 1.0f);
-        ObjectAnimator animatorTransX = ObjectAnimator.ofFloat(target,
-                "TranslationX", -size * startTransX, -size * endTransX);  // X方向向左平移
-        ObjectAnimator animatorTransY = ObjectAnimator.ofFloat(target,
-                "TranslationY", -size * startTransY, -size * endTransY);  // Y方向向上平移
-        ObjectAnimator animatorAlpha = ObjectAnimator.ofFloat(target,
-                "Alpha", 0.5f, 1.0f);                       // 淡入动画
+    protected void setGroupExpand(View target, float startTransY, float endTransY, long time, AnimatorListener listener) {
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(target, "ScaleY", 0f, 1.0f);  // Y方向放大
+        ObjectAnimator animatorTransY = ObjectAnimator.ofFloat(target, "TranslationY", -size * startTransY, -size * endTransY);  // Y方向向上平移
+        ObjectAnimator animatorAlpha = ObjectAnimator.ofFloat(target, "Alpha", 0.5f, 1.0f);                       // 淡入动画
         AnimatorSet animatorSet = new AnimatorSet();                              // 动画集
-        animatorSet.playTogether(animatorX, animatorY, animatorTransX, animatorTransY, animatorAlpha);           // 动画集一起播放
+        animatorSet.playTogether(animatorY, animatorTransY, animatorAlpha);           // 动画集一起播放
         animatorSet.setInterpolator(new OvershootInterpolator());      // 回弹插值器
-        animatorSet.setDuration(DURATION_SHORT);                                        // 设置动画播放时间
+        animatorSet.setDuration(time);                                        // 设置动画播放时间
+        if (listener != null) {
+            animatorSet.addListener(listener);
+        }
         animatorSet.start();
     }
 
@@ -232,26 +184,20 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
      * Fab组收缩动画
      *
      * @param target
-     * @param startTransX
-     * @param endTransX
      * @param startTransY
      * @param endTransY
      */
-    protected void setGroupShrink(View target, float startTransX, float endTransX, float startTransY, float endTransY) {
-        ObjectAnimator animatorX = ObjectAnimator.ofFloat(target,
-                "ScaleX", 1.0f, 0f);                        // X方向缩小
-        ObjectAnimator animatorY = ObjectAnimator.ofFloat(target,
-                "ScaleY", 1.0f, 0f);                        // Y方向缩小
-        ObjectAnimator animatorTransX = ObjectAnimator.ofFloat(target,
-                "TranslationX", -size * startTransX, -size * endTransX);  // X方向向右平移
-        ObjectAnimator animatorTransY = ObjectAnimator.ofFloat(target,
-                "TranslationY", -size * startTransY, -size * endTransY);  // Y方向向下平移
-        ObjectAnimator animatorAlpha = ObjectAnimator.ofFloat(target,
-                "Alpha", 1.0f, 0f);                         // 淡出动画
+    protected void setGroupShrink(View target, float startTransY, float endTransY, long time, AnimatorListener listener) {
+        ObjectAnimator animatorY = ObjectAnimator.ofFloat(target, "ScaleY", 1.0f, 0f);                        // Y方向缩小
+        ObjectAnimator animatorTransY = ObjectAnimator.ofFloat(target, "TranslationY", -size * startTransY, -size * endTransY);  // Y方向向下平移
+        ObjectAnimator animatorAlpha = ObjectAnimator.ofFloat(target, "Alpha", 1.0f, 0f);                         // 淡出动画
         AnimatorSet animatorSet = new AnimatorSet();                              // 动画集
-        animatorSet.playTogether(animatorX, animatorY, animatorTransX, animatorTransY, animatorAlpha);           // 动画集一起播放
+        animatorSet.playTogether(animatorY, animatorTransY, animatorAlpha);           // 动画集一起播放
         animatorSet.setInterpolator(new AnticipateInterpolator());      // 设置插值器
-        animatorSet.setDuration(DURATION_SHORT);                                        // 设置动画播放时间
+        animatorSet.setDuration(time);                                        // 设置动画播放时间
+        if (listener != null) {
+            animatorSet.addListener(listener);
+        }
         animatorSet.start();
     }
 
@@ -262,24 +208,9 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
      * @param end
      */
     protected void setFabRotation(float staer, float end) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(
-                show, "Rotation", staer, end);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(show, "Rotation", staer, end);
         animator.setDuration(DURATION_SHORT);
         animator.setInterpolator(new OvershootInterpolator());
-        animator.start();
-    }
-
-    /**
-     * 蒙版透明度动画
-     *
-     * @param start
-     * @param end
-     */
-    protected void setMaskingAlpha(float start, float end, AnimatorListener listener) {
-        ObjectAnimator animator = ObjectAnimator.ofFloat(masking, "Alpha", start, end);
-        animator.setDuration(DURATION_SHORT);
-        animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.addListener(listener);
         animator.start();
     }
 
@@ -289,10 +220,11 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
      * @param start
      * @param end
      */
-    protected void setMaskingExpand(float start, float end) {
+    protected void setMaskingExpand(float start, float end, AnimatorListener listener) {
         Animator animator = ViewAnimationUtils.createCircularReveal(masking, width, height, start, end);
         animator.setInterpolator(new AccelerateInterpolator());           // 加速插值器
         animator.setDuration(DURATION_SHORT);
+        animator.addListener(listener);
         animator.start();
     }
 
@@ -305,6 +237,16 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
     }
 
     /**
+     * 设置Fab组Item可见
+     */
+    protected void setFabVisible() {
+        for (int i = 0; i < fabCount; i++) {
+            fabs.get(i).setVisibility(View.VISIBLE);                // 设置Fab按钮隐藏
+        }
+        isFirstClick = false;
+    }
+
+    /**
      * Fab组item点击事件
      *
      * @param view
@@ -313,7 +255,7 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
     public void onClick(View view) {
         shrinkMenu();
         for (int i = 0; i < fabCount; i++) {
-            if (view.getId() == ids[i] || view.getId() == textIDs[i]) {
+            if (view.getId() == ids[i]) {
                 onFabItemClickListener.onFabItemClick((FloatingActionButton) fabs.get(i));
                 break;
             }

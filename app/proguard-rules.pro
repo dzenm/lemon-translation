@@ -40,3 +40,10 @@
 
 # realm 混淆
 -keep class io.realm.examples.realmgridview.City { <fields>; }
+
+# 有道QCR混淆
+-ignorewarnings
+-libraryjars libs/ YoudaoBase.jar
+-libraryjars libs/ YoudaoOCROnline.jar
+-keep class com.youdao.sdk.ydtranslate.** { ;}
+ -keep class com.youdao.ocr.online.* { *;}

@@ -77,11 +77,8 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
         binding.setWordModel(wordModel);
 
 
-        int[] ids = {R.id.diary, R.id.note};      // Fab组ID
-        int[] textIDs = {R.id.diaryText, R.id.noteText};
-
-        String[] descs = {"添加", "设置"};
-        binding.fabGroup.init(this, R.layout.fab_group, binding.floatBtn).setView(ids, descs, textIDs);
+        int[] ids = {R.id.setting, R.id.about};      // Fab组ID
+        binding.fabGroup.init(this, R.layout.fab_group, binding.floatBtn).setView(ids);
         binding.fabGroup.setOnFabItemClickListener(this);
 
         binding.content.addTextChangedListener(this);
@@ -298,10 +295,10 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
     @Override
     public void onFabItemClick(FloatingActionButton fab) {
         switch (fab.getId()) {
-            case R.id.diary:
+            case R.id.setting:
                 Toast.makeText(this, "third", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.note:
+            case R.id.about:
                 Toast.makeText(this, "forth", Toast.LENGTH_SHORT).show();
                 break;
         }
