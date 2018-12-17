@@ -1,4 +1,4 @@
-TranslateApp
+Lemon-Translation
 
 ### 软件界面
 <img src="https://github.com/freedomeden/lemon-translation/blob/master/picture/home.png" width = "30%" />
