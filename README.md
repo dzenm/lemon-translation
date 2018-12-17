@@ -12,6 +12,8 @@
 ### 翻译单词
 <img src="https://github.com/freedomeden/lemon-translation/blob/master/picture/translate.png" width = "30%" />
 
+### 使用
+<img src="https://github.com/freedomeden/lemon-translation/blob/master/picture/translate_gif.gif" width = "30%" />
 ----
 
 # <a href="https://raw.githubusercontent.com/freedomeden/lemon-translation/blob/master/app/release/app-release.apk" alt="APK下载">APK下载</a>
