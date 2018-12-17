@@ -6,41 +6,11 @@ import io.realm.annotations.PrimaryKey;
 public class Words extends RealmObject {
 
     @PrimaryKey
-    private String id;
+    public String id;           // 主键
 
-    private String query;
-    private String result;
-    private boolean like;
+    public String query;        // 需要翻译的内容
+    public String result;       // 翻译结果
+    public long date;           // 查询的时间
+    public boolean like;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    public boolean isLike() {
-        return like;
-    }
-
-    public void setLike(boolean like) {
-        this.like = like;
-    }
 }

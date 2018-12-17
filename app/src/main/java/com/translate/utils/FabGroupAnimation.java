@@ -24,8 +24,8 @@ import java.util.List;
 public class FabGroupAnimation extends RelativeLayout implements View.OnClickListener {
 
     private FloatingActionButton show;
-    private static final int DURATION_LONG = 300;    // 动画过渡时间
-    private static final int DURATION_SHORT = 150;    // 动画过渡时间
+    private static final int DURATION_LONG = 500;    // 动画过渡时间
+    private static final int DURATION_SHORT = 250;    // 动画过渡时间
     private boolean isEnpand = false;           // FloatActionButton是否展开
     private boolean isFirstClick = true;        // 第一次点击
     private boolean isDesc = false;             // Fab文字描述

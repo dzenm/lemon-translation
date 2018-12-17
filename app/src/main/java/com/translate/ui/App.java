@@ -2,6 +2,8 @@ package com.translate.ui;
 
 import android.app.Application;
 
+import com.translate.service.InitializeService;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -9,7 +11,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Realm.init(this);       // 数据库初始化
+        Realm.init(getApplicationContext());       // 数据库初始化
 
         // 默认配置
 //        Realm realm = Realm.getDefaultInstance();
@@ -18,5 +20,7 @@ public class App extends Application {
                 .schemaVersion(4)
                 .build();
         Realm.setDefaultConfiguration(config);
+
+        InitializeService.start(this);
     }
 }

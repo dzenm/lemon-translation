@@ -7,16 +7,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class TransLateAPI {
+public class Api {
 
     private static final String API = "http://openapi.youdao.com/api?";
     private static final String APP_KEY = "7211f1407e248b47";       // app_key
     private static final String KEY = "VJG2Z9euKKsRmpy5zzkd0GDQFTxz1buC";       // 密钥
     private static final String SALT = "212";       // 随机数
     private static final String AUTO = "auto";       // 中文
-    
+
     public static String autoTranslate(String query) {
-        String sign = TransLateAPI.md5(APP_KEY + query + SALT + KEY);
+        String sign = Api.md5(APP_KEY + query + SALT + KEY);
         Map<String, String> params = new LinkedHashMap<>();
         params.put("q", query);
         params.put("from", AUTO);
@@ -62,12 +62,14 @@ public class TransLateAPI {
     }
 
     public static String url(String url, Map<String, String> params) {
-        if (params == null) return url;
+        if (params == null)
+            return url;
         StringBuilder builder = new StringBuilder(url);
         int i = 0;
         for (String key : params.keySet()) {
             String value = params.get(key);
-            if (i != 0) builder.append("&");
+            if (i != 0)
+                builder.append("&");
             builder.append(key);
             builder.append("=");
             builder.append(encode(value));

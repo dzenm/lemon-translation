@@ -8,14 +8,15 @@
         android:id="@+id/masking"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/gray_translucent"
         android:visibility="gone" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/diary"
         style="@style/FabGroupTheme"
-        app:backgroundTint="@color/colorPrimaryDark"
+        app:backgroundTint="@color/colorAccent"
         app:elevation="5dp"
+        app:fabSize="mini"
         app:rippleColor="@color/gray"
         app:srcCompat="@drawable/fab_memo" />
 
@@ -26,8 +27,9 @@
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/note"
         style="@style/FabGroupTheme"
-        app:backgroundTint="@color/colorPrimaryDark"
+        app:backgroundTint="@color/colorAccent"
         app:elevation="5dp"
+        app:fabSize="mini"
         app:rippleColor="@color/gray"
         app:srcCompat="@drawable/fab_diary" />
 

@@ -19,11 +19,21 @@ public class WordsAdapter extends RecyclerView.Adapter<WordsAdapter.ViewHolder> 
     private List<WordsBean> wordsBeans;
     private OnItemClickListener onItemClickListener;
 
+    /**
+     * 设置点击事件
+     * @param onItemClickListener
+     * @return
+     */
     public WordsAdapter setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
         return this;
     }
 
+    /**
+     * 设置数据
+     * @param wordsBeans
+     * @return
+     */
     public WordsAdapter setWordsBeans(List<WordsBean> wordsBeans) {
         this.wordsBeans = wordsBeans;
         return this;
@@ -40,14 +50,22 @@ public class WordsAdapter extends RecyclerView.Adapter<WordsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull WordsAdapter.ViewHolder viewHolder, final int i) {
-
         viewHolder.getBinding().setVariable(BR.wordsBean, wordsBeans.get(i));
         viewHolder.getBinding().executePendingBindings();
-
+        if (onItemClickListener == null) {
+            return;
+        }
         viewHolder.getBinding().getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onItemClickListener.onItemClick(i);
+            }
+        });
+        viewHolder.getBinding().getRoot().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                onItemClickListener.onItemLongClick(i);
+                return true;
             }
         });
     }
@@ -60,7 +78,7 @@ public class WordsAdapter extends RecyclerView.Adapter<WordsAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ViewDataBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(View itemView) {
             super(itemView);
         }
 
@@ -74,6 +92,9 @@ public class WordsAdapter extends RecyclerView.Adapter<WordsAdapter.ViewHolder> 
     }
 
     public interface OnItemClickListener {
+
         void onItemClick(int position);
+
+        void onItemLongClick(int position);
     }
 }

@@ -37,3 +37,6 @@
 #okio
 -dontwarn okio.**
 -keep class okio.**{*;}
+
+# realm 混淆
+-keep class io.realm.examples.realmgridview.City { <fields>; }

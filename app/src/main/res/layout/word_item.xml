@@ -12,36 +12,30 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:background="@color/white"
         android:foreground="?attr/selectableItemBackground">
 
-        <LinearLayout
-            android:id="@+id/word"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/query"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="12dp"
+            android:maxLines="1"
+            android:text="@={wordsBean.query}" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:padding="12dp"
-                android:text="@{wordsBean.query}" />
+        <TextView
+            android:id="@+id/result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/query"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="12dp"
+            android:maxLines="1"
+            android:text="@={wordsBean.result}" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:padding="12dp"
-                android:text="@{wordsBean.result}" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_below="@+id/word"
-            android:background="@color/gray" />
     </RelativeLayout>
 </layout>
