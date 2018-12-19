@@ -12,7 +12,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,11 +76,12 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
         binding.setWordModel(wordModel);
 
 
-        int[] ids = {R.id.setting, R.id.about};      // Fab组ID
+        int[] ids = {R.id.setting, R.id.qr, R.id.about};      // Fab组ID
         binding.fabGroup.init(this, R.layout.fab_group, binding.floatBtn).setView(ids);
         binding.fabGroup.setOnFabItemClickListener(this);
 
         binding.content.addTextChangedListener(this);
+        mainModel.setTranslation(getString(R.string.info_unknow));
     }
 
     @Override
@@ -114,12 +114,6 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
 
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.clearBtn:                 // 清空输入框
-                mainModel.setContentInput(getString(R.string.null_string));
-                break;
-            case R.id.qrBtn:
-                startActivity(new Intent(this, QrCodeActivity.class));
-                break;
             case R.id.translateBtn:
                 String query = mainModel.getContentInput();   // 获取输入的要翻译的文本
                 if (query == null || query.equals("")) {
@@ -164,11 +158,11 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
             mainModel.setDicVisible(false);
             mainModel.setTranslationVisible(false);
         }
-        binding.content.setSelection(s.length());
     }
 
     @Override
     public void afterTextChanged(Editable s) {
+
     }
 
     /**
@@ -235,7 +229,11 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
             List<YouDaoBean.Web> webList = bean.getWeb();       // 显示扩展词义
             StringBuffer explain = new StringBuffer();          // 扩展的单词
             for (int i = 0; i < webList.size(); i++) {
-                explain.append("\n\n" + webList.get(i).getKey() + "\n" + webList.get(i).getValue());
+                if (i == 0) {
+                    explain.append("\n" + webList.get(i).getKey() + "\n" + webList.get(i).getValue());
+                } else {
+                    explain.append("\n\n" + webList.get(i).getKey() + "\n" + webList.get(i).getValue());
+                }
             }
 
             mainModel.setUsPhonetic(us_word);
@@ -298,11 +296,16 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
             case R.id.setting:
                 Toast.makeText(this, "third", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.qr:
+                startActivity(new Intent(this, QrCodeActivity.class));
+                break;
             case R.id.about:
                 Toast.makeText(this, "forth", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
+
+    private long tempClick = 0;
 
     /**
      * RecyclerView点击事件
@@ -311,9 +314,15 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
      */
     @Override
     public void onItemClick(int position) {
-        String query = wordsBeans.get(position).getQuery();
-        mainModel.setContentInput(query);
-        presenter.requestJsonData(Api.autoTranslate(query));
+        long currentClick = System.currentTimeMillis();
+        if (currentClick - tempClick > 500) {
+            String query = wordsBeans.get(position).getQuery();
+            mainModel.setContentInput(query);
+            presenter.requestJsonData(Api.autoTranslate(query));
+            tempClick = currentClick;
+        } else {
+            Toast.makeText(this, "别太快了，慢一点", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

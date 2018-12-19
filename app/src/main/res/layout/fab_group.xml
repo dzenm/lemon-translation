@@ -21,6 +21,15 @@
         app:srcCompat="@drawable/ic_setting" />
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/qr"
+        style="@style/FabGroupTheme"
+        app:backgroundTint="@color/colorAccent"
+        app:elevation="5dp"
+        app:fabSize="mini"
+        app:rippleColor="@color/gray"
+        app:srcCompat="@drawable/ic_qr" />
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/about"
         style="@style/FabGroupTheme"
         app:backgroundTint="@color/colorAccent"

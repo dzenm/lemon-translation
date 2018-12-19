@@ -8,6 +8,8 @@
 
     <string name="settings">设置</string>
 
+    <string name="info_unknow">unkonw</string>
+
     <string name="info_input_trans_word">请输入要查询的单词</string>
     <string name="info_copy_success">复制成功</string>
     <string name="info_change_word_to_search">请换一个词搜索</string>

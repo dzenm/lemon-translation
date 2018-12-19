@@ -90,6 +90,7 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
                 setFabRotation(0f, 45f);                         // 按钮旋转动画
                 setGroupExpand(fabs.get(0), 0, 1.3f * 1, TIME * 3, null);
                 setGroupExpand(fabs.get(1), 0, 1.3f * 2, TIME * 4, null);
+                setGroupExpand(fabs.get(2), 0, 1.3f * 3, TIME * 5, null);
                 if (isFirstClick) {
                     setFabVisible();
                 }
@@ -105,7 +106,8 @@ public class FabGroupAnimation extends RelativeLayout implements View.OnClickLis
         isEnpand = false;
         setFabRotation(45f, 0f);                         // 按钮旋转动画
         setGroupShrink(fabs.get(0), 1.3f * 1, 0, TIME * 3, null);
-        setGroupShrink(fabs.get(1), 1.3f * 2, 0, TIME * 4, new AnimatorListener() {
+        setGroupShrink(fabs.get(1), 1.3f * 2, 0, TIME * 4, null);
+        setGroupShrink(fabs.get(2), 1.3f * 3, 0, TIME * 5, new AnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);

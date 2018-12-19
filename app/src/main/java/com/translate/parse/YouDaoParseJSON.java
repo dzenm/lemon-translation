@@ -39,8 +39,8 @@ public class YouDaoParseJSON {
             return null;
         }
         bean.setL(language);
-        bean.setTranslation(json.optJSONArray("translation").optString(0));    // 翻译
-
+        String translation = json.optJSONArray("translation").optString(0);
+        bean.setTranslation(translation.replace(",", ""));    // 翻译
 
         JSONObject basicObject = json.optJSONObject("basic");
         if (basicObject != null) {
