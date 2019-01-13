@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -82,20 +83,6 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
 
         binding.content.addTextChangedListener(this);
         mainModel.setTranslation(getString(R.string.info_unknow));
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.setting) {
-            Toast.makeText(this, R.string.settings, Toast.LENGTH_SHORT).show();
-        }
-        return true;
     }
 
     /**
@@ -199,12 +186,8 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
         animationDrawable.start();      // 开始播放
     }
 
-    /**
-     * 设置获取的数据
-     *
-     * @param bean
-     */
-    private void setTranslateData(YouDaoBean bean) {
+    @Override
+    public void onSucceed(YouDaoBean bean) {
         basic = bean.getBasic();
         if (basic != null) {
             // 音标的显示
@@ -251,11 +234,6 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.OnP
         WordsHelper.insert(mainModel.getContentInput(), bean.getTranslation());     // 保存翻译数据
         getData();
         binding.recyclerView.smoothScrollToPosition(0);
-    }
-
-    @Override
-    public void onSucceed(YouDaoBean bean) {
-        setTranslateData(bean);
     }
 
     @Override

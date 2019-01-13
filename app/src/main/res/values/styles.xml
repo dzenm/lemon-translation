@@ -17,4 +17,8 @@
         <item name="android:layout_margin">26dp</item>
     </style>
 
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:background">@drawable/splash</item>
+    </style>
 </resources>
